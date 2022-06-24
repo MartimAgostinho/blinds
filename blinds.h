@@ -2,6 +2,7 @@
 #define _BLIND_H_
 
 #define GPIO "gpio"
+#define BLIND_TIME 100 //time in seconds
 
 typedef struct {
 
