@@ -31,7 +31,7 @@ void stop_blind_relay(blind b){
 void /*char*/ open_blind(blind b){
     
 
-    if( !strcmp(b.ID, GPIO) ){ 
+    if( !b.ID ){ 
         open_blind_gpio(b);
         wait(BLIND_TIME);
         stop_blind_gpio(b);

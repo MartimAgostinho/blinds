@@ -7,7 +7,7 @@
 typedef struct {
 
     char *  room;
-    char *  ID;
+    char *  ID;             //0 if raspberry 
     int  *  open_hours;
     int  *  close_hours;
     int     port_open;
