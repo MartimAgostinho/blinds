@@ -1,1 +1,1 @@
-# blinds
+# Blinds automation
