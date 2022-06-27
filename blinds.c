@@ -46,10 +46,20 @@ void /*char*/ open_blind(blind b){
     //return res;
 }
 
+void /*char*/ open_blind_gen( void ** args ){
+    
+    if( !args[1] ){ return; }//args have to end with value 0( prevent coredump )
+
+    blind *b = args[0];
+
+    open_blind( *b );
+
+}
+
 void /*char*/ close_blind(blind b){
     
 
-    if( !strcmp(b.ID, GPIO) ){ 
+    if( !b.ID ){ 
         close_blind_gpio(b);
         wait(BLIND_TIME);
         stop_blind_gpio(b);
