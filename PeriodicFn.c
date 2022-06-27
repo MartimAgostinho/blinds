@@ -21,9 +21,10 @@ void add_fn(linked_fn lkfn,void (* fn)(void **),void ** args,unsigned long int m
         lkfn.head->head_fn->args = args;
         lkfn.head->head_fn->fn_ptr = fn;
         lkfn.head->head_fn->next_fn = NULL;
-
+        lkfn.tail = lkfn.head;
         return;
-    }else if( lkfn.head == lkfn.tail ){
+
+    }else if( lkfn.head == lkfn.tail && min != lkfn.head->time){
 
         return;
     }
