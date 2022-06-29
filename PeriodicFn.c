@@ -64,9 +64,9 @@ void add_fn(linked_fn lkfn,void (* fn)(void **),void ** args,unsigned long int m
             }else{//TODO verify
                 
                 prn_aux->time   = min;
+                prn_aux->next   = lkfn.tail;
                 lkfn.head       = prn_aux;
-                lkfn.head->next = lkfn.tail;
-                lkfn.tail->next = prn_aux;
+                lkfn.tail->next = lkfn.head;
                 lkfn.tail->time -= min;   
             }
         }
@@ -74,7 +74,53 @@ void add_fn(linked_fn lkfn,void (* fn)(void **),void ** args,unsigned long int m
         return;
     }
 
+    //1 find linked_fn place
     
+    periodic_node *prn_new;
+    periodic_node  *prn_aux = lkfn.head, *prn_prev = NULL;
+    unsigned long int min_aux = prn_aux->time;
+    
+    while( min_aux >= min ){
+
+        min      -= min_aux;
+        prn_prev =  prn_aux;
+        prn_aux  =  prn_aux->next;
+        min_aux  =  prn_aux->time;
+        
+    }
+    
+    if( min_aux == min ){
+        
+        fn_node *fn_aux = prn_aux->head_fn;
+        //prn_new = prn_aux;
+        
+        while( fn_aux != NULL ){ fn_aux = fn_aux->next_fn; }
+
+        fn_aux->next_fn = fn_new;
+    }
+
+    else{
+
+        prn_new          = (periodic_node *)malloc( sizeof(periodic_node) );
+        prn_new->head_fn = fn_new;
+        prn_new->time    = min;
+        prn_new->next    = prn_aux;
+        prn_prev->next   = prn_new;
+
+        while( prn_aux != lkfn.head ){
+
+            prn_aux->time -= min;
+            prn_aux       =  prn_aux->next;
+
+        }
+
+    }
+
+    //2 find periodic_node place 
+    //place it
+    //change  next nodes time
+    //success!
+
 
 }
 
@@ -84,4 +130,14 @@ void del_linked_fn(linked_fn lkfn){
 
 void start_fn(linked_fn lkfn);
 
+periodic_node * create_periodic_node(periodic_node * next_prn){
 
+    periodic_node * prn = (periodic_node *)malloc( sizeof(periodic_node) );
+
+    prn->head_fn    = NULL;
+    prn->next       = next_prn;
+    prn->time       = 0;
+    
+    return prn;
+
+}

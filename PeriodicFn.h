@@ -34,6 +34,7 @@ linked_fn make_linked_fn();
 void add_fn(linked_fn lkfn,void (* fn)(void **),void ** args,unsigned long int min );
 void start_fn(linked_fn lkfn);
 void del_linked_fn(linked_fn lkfn);
+periodic_node * create_periodic_node(periodic_node * next_prn);
 
 //START
 //STOP TODO HOW DO I MAKE IT STOOOOOOOOOOOP
