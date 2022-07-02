@@ -94,9 +94,9 @@ void add_fn(linked_fn lkfn,void (* fn)(void **),void ** args,unsigned long int m
         fn_node *fn_aux = prn_aux->head_fn;
         //prn_new = prn_aux;
         
-        while( fn_aux != NULL ){ fn_aux = fn_aux->next_fn; }
-
-        fn_aux->next_fn = fn_new;
+        //while( fn_aux != NULL ){ fn_aux = fn_aux->next_fn; }
+        prn_aux->head_fn = fn_new;
+        fn_new->next_fn  = fn_aux;
     }
 
     else{
@@ -111,7 +111,6 @@ void add_fn(linked_fn lkfn,void (* fn)(void **),void ** args,unsigned long int m
 
             prn_aux->time -= min;
             prn_aux       =  prn_aux->next;
-
         }
 
     }
@@ -124,8 +123,16 @@ void add_fn(linked_fn lkfn,void (* fn)(void **),void ** args,unsigned long int m
 
 }
 
+
 void del_linked_fn(linked_fn lkfn){
 
+    periodic_node * prn_aux = lkfn.head;
+    periodic_node * prn_nxt = NULL;
+    do{
+        
+    
+
+    }while( prn_aux != lkfn.tail );
 }
 
 void start_fn(linked_fn lkfn);
