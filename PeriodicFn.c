@@ -119,8 +119,6 @@ void add_fn(linked_fn lkfn,void (* fn)(void **),void ** args,unsigned long int m
     //place it
     //change  next nodes time
     //success!
-
-
 }
 
 
@@ -128,11 +126,24 @@ void del_linked_fn(linked_fn lkfn){
 
     periodic_node * prn_aux = lkfn.head;
     periodic_node * prn_nxt = NULL;
+    fn_node       * fn_aux = prn_aux->head_fn;
+    fn_node       * fn_nxt;
+    
     do{
         
-    
+        //delete fn_nodes
+        while( fn_aux != NULL ){
 
-    }while( prn_aux != lkfn.tail );
+            fn_nxt = fn_aux->next_fn;
+            free(fn_aux);
+            fn_aux = fn_nxt;
+        }
+        
+        prn_nxt = prn_aux->next;
+        free(prn_aux);
+        prn_aux = prn_nxt;
+
+    }while( prn_aux != lkfn.head );
 }
 
 void start_fn(linked_fn lkfn);
