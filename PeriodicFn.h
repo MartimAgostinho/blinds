@@ -1,6 +1,8 @@
 #ifndef _PeriodicFn_H_
 #define _PeriodicFn_H_
 
+#define DAYMIN 1440
+
 //********************structs********************//
 
 typedef struct fn_node fn_node ;
@@ -31,10 +33,11 @@ typedef struct{
 //********************structs********************//
 
 linked_fn make_linked_fn();
-void add_fn(linked_fn lkfn,void (* fn)(void **),void ** args,unsigned long int min );
+void add_fn(linked_fn * lkfn,void (* fn)(void **),void ** args,unsigned long int min );
 void start_fn(linked_fn lkfn);
 void del_linked_fn(linked_fn lkfn);
 periodic_node * create_periodic_node(periodic_node * next_prn);
+void exec_node(periodic_node *node);
 
 //START
 //STOP TODO HOW DO I MAKE IT STOOOOOOOOOOOP
