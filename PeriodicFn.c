@@ -12,118 +12,89 @@ linked_fn make_linked_fn(){
 
     return lkfn;
 }
-
 void add_fn(linked_fn *lkfn,void (* fn)(void **),void ** args,unsigned long int min){
-
 
     fn_node * fn_new = (fn_node * ) malloc( sizeof(fn_node) );
     
-    if( fn_new == NULL ){ return; }
+    if ( fn_new == NULL ){ return; }
 
     fn_new->next_fn  = NULL;
     fn_new->fn_ptr   = fn;
     fn_new->args     = args;
 
-    if( lkfn->head == NULL ){//TODO redoo tail cant be == to head
-        
+    if ( lkfn->head == NULL ){
          //first node
         //null node just with time
 
-        lkfn->head = ( periodic_node * )(malloc( sizeof(periodic_node) ));//TODO free's
+        lkfn->head = ( periodic_node * )(malloc( sizeof(periodic_node) ));
         lkfn->tail = ( periodic_node * )(malloc( sizeof(periodic_node) ));
 
-        if( lkfn->head == NULL ){ return; }
+        if ( lkfn->head == NULL ){ return; }
         
         lkfn->head->head_fn  = fn_new;
         lkfn->head->time     = min;
-        //printf("TIME!:%d\n",lkfn->head->time);
-        lkfn->tail->time     = DAYMIN - min;//time till midnight
-        lkfn->tail->head_fn  = NULL;       //dummy node
+        lkfn->tail->time     = DAYMIN - min; //time till midnight
+        lkfn->tail->head_fn  = 0;           //NULL node
         lkfn->tail->next     = lkfn->head; //loop
         lkfn->head->next     = lkfn->tail;//loop
         
         return;
-
-    }else if( lkfn->tail->head_fn == NULL ){
-        
-        if( min == lkfn->head->time ){//just for safety probs useless
-            
-            fn_new->next_fn    = lkfn->head->head_fn;
-            lkfn->head->head_fn = fn_new; 
-            return;
-        
-        }/*else{
-
-            periodic_node *prn_aux = ( periodic_node * )malloc( sizeof(periodic_node) );
-
-            if( prn_aux == NULL ){ return; }
-            
-            prn_aux->head_fn  = fn_new;
-            
-            if( min > lkfn.head->time ){
-                
-                prn_aux->time   = min - lkfn.head->time;
-                lkfn.tail       = prn_aux;
-                lkfn.head->next = prn_aux;   
-
-            }else{ 
-
-                prn_aux->time   = min;
-                prn_aux->next   = lkfn.tail;
-                lkfn.head       = prn_aux;
-                lkfn.tail->next = lkfn.head;
-                lkfn.tail->time -= min;   
-            }
-        }*/
     }
 
-    //1 find linked_fn place
-    
-    periodic_node *prn_new;
-    periodic_node *prn_aux = lkfn->head, *prn_prev = lkfn->tail;
+    periodic_node * prn_aux = lkfn->head, * prn_prev = lkfn->tail;
     unsigned long int min_aux = prn_aux->time;
-    
-    while( min_aux >= min ){
 
-        min      -= min_aux;
-        prn_prev =  prn_aux;
-        prn_aux  =  prn_aux->next;
-        min_aux  =  prn_aux->time;
-    }
-    //printf("min%lu\nmin_aux:%lu\nprn_prev:%p\nprn_aux:%p\n",min,min_aux,prn_prev,prn_aux);
-    
-    if( min_aux == min ){
-        
-        fn_node *fn_aux = prn_aux->head_fn;
-        //prn_new = prn_aux;
-        
-        //while( fn_aux != NULL ){ fn_aux = fn_aux->next_fn; }
-        prn_aux->head_fn = fn_new;
-        fn_new->next_fn  = fn_aux;
-    }
+    if ( min >= min_aux ){//if its not the head
 
-    else{
-
-        prn_new          = (periodic_node *)malloc( sizeof(periodic_node) );
-        prn_new->head_fn = fn_new;
-        prn_new->time    = min;
-        prn_new->next    = prn_aux;
-        prn_prev->next   = prn_new;
-
-        while( prn_aux != lkfn->head ){
-
-            prn_aux->time -= min;
-            prn_aux       =  prn_aux->next;
+        while (min > min_aux){//get the relative time, prev node and nxt node
+            
+            min      -= min_aux;
+            prn_prev =  prn_aux;
+            prn_aux  =  prn_aux->next;
+            min_aux  =  prn_aux->time;
         }
 
+        if ( min == min_aux ){// if node already exists 
+            
+            fn_node * fn_aux = prn_aux->head_fn;
+            prn_aux->head_fn = fn_new;
+            fn_new->next_fn  = fn_aux;
+            return;
+        }
+        periodic_node * prn_new = ( periodic_node * )malloc(sizeof(periodic_node));
+        if ( prn_new == NULL ){ return; }
+        
+        //create new node 
+        prn_new->head_fn = fn_new;
+        prn_new->next    = prn_aux;
+        prn_new->time    = min;
+        prn_prev->next   = prn_new;
+
+        do{//update relative times
+            prn_aux->time -= min;
+            prn_aux       =  prn_aux->next;
+
+        }while( prn_aux != lkfn->tail );    
+        return;
     }
+     //TODO fix redundant 
+    //if time is less than head
+    periodic_node * prn_new = ( periodic_node * )malloc(sizeof(periodic_node));
+    if ( prn_new == NULL ){ return; }
 
-    //2 find periodic_node place 
-    //place it
-    //change  next nodes time
-    //success!
+    //create new node 
+    prn_new->head_fn = fn_new;
+    prn_new->next    = prn_aux;
+    prn_new->time    = min;
+    prn_prev->next   = prn_new;
+    
+    do{//update relative times
+        prn_aux->time -= min;
+        prn_aux       =  prn_aux->next;
+
+    }while( prn_aux != lkfn->tail );
+    lkfn->head = prn_new;//update head
 }
-
 
 void del_linked_fn(linked_fn lkfn){
 
