@@ -39,7 +39,6 @@ void del_linked_fn(linked_fn lkfn){
 
 void add_fn(linked_fn *lkfn,void (* fn)(void **),void ** args,unsigned long int min,unsigned int id){
 
-
     fn_node * fn_new = (fn_node * ) malloc( sizeof(fn_node) );
     
     if ( fn_new == NULL ){ return; }
@@ -104,7 +103,7 @@ void add_fn(linked_fn *lkfn,void (* fn)(void **),void ** args,unsigned long int 
         }while( prn_aux != lkfn->tail );    
         return;
     }
-     //TODO fix redundant 
+     //TODO fix redundant  code
     //if time is less than head
     periodic_node * prn_new = ( periodic_node * )malloc(sizeof(periodic_node));
     if ( prn_new == NULL ){ return; }
@@ -137,8 +136,8 @@ void rm_fn(linked_fn * lkfn,unsigned int id){//remove a primeira funcao com o id
         while (fn_aux != NULL) {
             
             if ( fn_aux->id == id ) {
-                
-                if (fn_prev == NULL && fn_aux->next_fn == NULL) {//if its de only fn on the node
+
+                if ( prn_aux->head_fn == fn_aux && fn_aux->next_fn == NULL) {//if its de only fn on the node
                     
                     unsigned long int min = prn_aux->time;
                     free(fn_aux);
@@ -147,21 +146,23 @@ void rm_fn(linked_fn * lkfn,unsigned int id){//remove a primeira funcao com o id
                         
                         lkfn->tail->next = prn_aux->next;//next from head node
                         lkfn->head       = lkfn->tail->next;
-                    
                     }else{
                         prn_prev->next = prn_aux->next;
                     }
+
                     prn_prev = prn_aux->next;
                     free( prn_aux );
                     prn_aux = prn_prev;
                     do{//fix time
+                    
                         prn_aux->time += min;
                         prn_aux = prn_aux->next;
                     }while( prn_aux != lkfn->head );
+                    
                     return;
                 }
-                
-                if( fn_prev == NULL ){//change head fn
+               
+                if( prn_aux->head_fn == fn_aux ){//change head fn
 
                     prn_aux->head_fn = fn_aux->next_fn;
                 
@@ -169,6 +170,7 @@ void rm_fn(linked_fn * lkfn,unsigned int id){//remove a primeira funcao com o id
                     
                     fn_prev->next_fn = fn_aux->next_fn;
                 }
+    
                 free(fn_aux);
                 return;
             }

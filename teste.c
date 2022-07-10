@@ -42,7 +42,7 @@ int main(void){
     add_fn( &lkfn, *fn2gen, agrs2 , 90,1);
     add_fn( &lkfn, *fn1gen, agrs1 , 35,2);
     add_fn( &lkfn, *fn3gen, agrs3 , 35,3);
-    add_fn( &lkfn, *fn2gen, agrs2 , 35,1);
+    add_fn( &lkfn, *fn2gen, agrs2 , 35,4);
     prn_aux = lkfn.head;
 
     for(int i = 0;i < 3;++i){
@@ -55,7 +55,8 @@ int main(void){
 
     printf("3/--------------------------\\\n");
 
-    rm_fn( &lkfn,3);
+    rm_fn( &lkfn,1);
+    prn_aux = lkfn.head;
     for(int i = 0;i < 3;++i){
 
         printf("ADDR: %p\n",prn_aux);
@@ -64,7 +65,8 @@ int main(void){
         prn_aux = prn_aux->next;
     }
     printf("2/--------------------------\\\n");
-    rm_fn(&lkfn, 2);
+    //rm_fn(&lkfn, 1);
+    prn_aux = lkfn.head;
     for(int i = 0;i < 3;++i){
 
         printf("ADDR: %p\n",prn_aux);
