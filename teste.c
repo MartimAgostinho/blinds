@@ -39,17 +39,50 @@ int main(void){
     periodic_node * prn_aux;
 
     
-    add_fn( &lkfn, *fn2gen, agrs2 , 90 );
-    add_fn( &lkfn, *fn1gen, agrs1 , 35 );
-    add_fn( &lkfn, *fn3gen, agrs3 , 35 );
+    add_fn( &lkfn, *fn2gen, agrs2 , 90,1);
+    add_fn( &lkfn, *fn1gen, agrs1 , 35,2);
+    add_fn( &lkfn, *fn3gen, agrs3 , 35,3);
+    add_fn( &lkfn, *fn2gen, agrs2 , 35,1);
     prn_aux = lkfn.head;
 
-    for(int i = 0;i < 7;++i){
+    for(int i = 0;i < 3;++i){
 
         printf("ADDR: %p\n",prn_aux);
         printf("NODE%d TIME:%d\n",i,prn_aux->time);
         exec_node(prn_aux);
         prn_aux = prn_aux->next;
     }
+
+    printf("3/--------------------------\\\n");
+
+    rm_fn( &lkfn,3);
+    for(int i = 0;i < 3;++i){
+
+        printf("ADDR: %p\n",prn_aux);
+        printf("NODE%d TIME:%d\n",i,prn_aux->time);
+        exec_node(prn_aux);
+        prn_aux = prn_aux->next;
+    }
+    printf("2/--------------------------\\\n");
+    rm_fn(&lkfn, 2);
+    for(int i = 0;i < 3;++i){
+
+        printf("ADDR: %p\n",prn_aux);
+        printf("NODE%d TIME:%d\n",i,prn_aux->time);
+        exec_node(prn_aux);
+        prn_aux = prn_aux->next;
+    }
+    printf("1/--------------------------\\\n");
+    
+    rm_fn(&lkfn, 1);
+    prn_aux = lkfn.head;
+    for(int i = 0;i < 3;++i){
+
+        printf("ADDR: %p\n",prn_aux);
+        printf("NODE%d TIME:%d\n",i,prn_aux->time);
+        exec_node(prn_aux);
+        prn_aux = prn_aux->next;
+    }
+    del_linked_fn(lkfn);
     return 0;
 }

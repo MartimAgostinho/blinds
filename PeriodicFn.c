@@ -123,7 +123,7 @@ void add_fn(linked_fn *lkfn,void (* fn)(void **),void ** args,unsigned long int 
     lkfn->head = prn_new;//update head
 }
 
-void rm_fn(linked_fn * lkfn,unsigned int id){
+void rm_fn(linked_fn * lkfn,unsigned int id){//remove a primeira funcao com o id "id"
 
     periodic_node * prn_aux  = lkfn->head;
     periodic_node * prn_prev = lkfn->tail;
@@ -138,29 +138,39 @@ void rm_fn(linked_fn * lkfn,unsigned int id){
             
             if ( fn_aux->id == id ) {
                 
-                if (fn_prev == NULL) {//if its de only fn on the node
+                if (fn_prev == NULL && fn_aux->next_fn == NULL) {//if its de only fn on the node
                     
                     unsigned long int min = prn_aux->time;
                     free(fn_aux);
 
-                    if ( prn_prev == lkfn->tail) {
+                    if ( prn_prev == lkfn->tail) {//if its the head
+                        
                         lkfn->tail->next = prn_aux->next;//next from head node
                         lkfn->head       = lkfn->tail->next;
                     
                     }else{
                         prn_prev->next = prn_aux->next;
                     }
+                    prn_prev = prn_aux->next;
                     free( prn_aux );
-                    
-                    do{
+                    prn_aux = prn_prev;
+                    do{//fix time
                         prn_aux->time += min;
                         prn_aux = prn_aux->next;
-                    }while( prn_aux != lkfn->tail );
+                    }while( prn_aux != lkfn->head );
                     return;
                 }
-                free(fn_aux);
+                
+                if( fn_prev == NULL ){//change head fn
 
-                //TODO if its the last node or not
+                    prn_aux->head_fn = fn_aux->next_fn;
+                
+                }else{
+                    
+                    fn_prev->next_fn = fn_aux->next_fn;
+                }
+                free(fn_aux);
+                return;
             }
             fn_prev = fn_aux;
             fn_aux  = fn_aux->next_fn;

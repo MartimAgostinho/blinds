@@ -37,6 +37,7 @@ void start_fn(linked_fn lkfn);
 void del_linked_fn(linked_fn lkfn);
 periodic_node * create_periodic_node(periodic_node * next_prn);
 void exec_node(periodic_node *node);
+void rm_fn(linked_fn * lkfn,unsigned int id);
 
 //START
 //STOP TODO HOW DO I MAKE IT STOOOOOOOOOOOP
