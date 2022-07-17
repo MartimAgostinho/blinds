@@ -21,7 +21,7 @@ blind make_blind(char * room_name,char * ID,int * open_hours,int * close_hours,u
 
     blind b;
     
-    b.room_name = (char *)malloc( sizeof(char) * ( strlen(room_name + 1) ) );
+    b.room_name = (char *)malloc( sizeof(char) * ( strlen(room_name) + 1) );
     if( b.room_name == NULL ){ exit(0); }
     strcpy(b.room_name, room_name);
 
@@ -109,7 +109,7 @@ void  open_blind(blind b){
         set_blind_relay(b.port_open,b.ID,0);
     }
 }
-
+//TODO: use list
 void close_blind(blind b){
 
     if( !b.ID ){ 
