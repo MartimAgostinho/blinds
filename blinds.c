@@ -6,6 +6,8 @@
 
 #include "blinds.h"
 
+#define MAXCHAR 250
+
 //NEEDS SUDO PERMISSION
 void strapp(char *str,...);
 void wait(int seconds);
@@ -109,6 +111,7 @@ void  open_blind(blind b){
         set_blind_relay(b.port_open,b.ID,0);
     }
 }
+
 //TODO: use list
 void close_blind(blind b){
 
@@ -141,6 +144,61 @@ void close_blind_gen( void ** args ){
     blind *b = args[0];
 
     close_blind( *b );
+}
+
+blind fread_blind(const char * filename){
+
+    FILE *fp = fopen(filename,"r");
+
+    if( fp == NULL ){ exit(1); }
+
+    char         room_name[MAXCHAR];  
+    char         ID[MAXCHAR];         
+    int     *    open_hours;     
+    int     *    close_hours;
+    unsigned int port_open;  
+    unsigned int port_close;
+    int i,j;
+
+    fscanf(fp," %[^\n]}", room_name);
+    fscanf(fp," %[^\n]", ID);
+
+    fscanf(fp,"%d",&j);
+    open_hours    = (int *)malloc( sizeof(int) * j );
+    open_hours[0] = j;    
+
+    for(i = 1; i < j;++i){ fscanf(fp,"%d",&open_hours[i]); }
+
+    fscanf(fp,"%d",&j);
+    close_hours    = (int *)malloc( sizeof(int) * j );
+    close_hours[0] = j;    
+
+    for(i = 1; i < j;++i){ fscanf(fp,"%d",&open_hours[i]); }
+
+    fscanf(fp,"%u",&port_open);
+    fscanf(fp,"%u",&port_close);
+
+    blind b = make_blind(room_name, ID , open_hours , close_hours, port_open , port_close );
+    
+    return b;
+}
+
+//debug
+void print_blind(blind b){
+
+    int i;
+
+    printf("Room name:%s\n",b.room_name);
+    if( !b.ID ){ printf("ID: 0\n"); }
+    else{ printf("ID: %s\n",b.ID); }
+    
+    printf("open hours:");
+    for(i = 1;i < b.open_hours[0];++i){ printf("%d,",b.open_hours[i]); }
+    printf("\nclose hours:");
+    for(i = 1;i < b.close_hours[0];++i){ printf("%d,",b.open_hours[i]); }
+    
+    printf("\nOpening port:%u\n",b.port_open);
+    printf("Closing port:%u\n",b.port_close);
 }
 
 void wait(int seconds){
