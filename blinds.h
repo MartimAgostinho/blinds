@@ -2,6 +2,9 @@
 #define _BLIND_H_
 
 #include <pigpio.h>
+#include <stdio.h>
+
+#include "sequence.h"
 
 #define GPIO "gpio"
 #define BLIND_TIME 100 //time in seconds
@@ -17,11 +20,23 @@ typedef struct {
 
 }blind;
 
-blind make_blind(char * room_name,char * ID,int * open_hours,int * close_hours,unsigned int port_open,unsigned int port_close );
+blind make_blind(char * room_name,
+        char * ID,
+        int * open_hours,
+        int * close_hours,
+        unsigned int port_open,
+        unsigned int port_close );
+
 void free_blind(blind b);
 void open_blind(blind b);
 void close_blind(blind b);
 void open_blind_gen(void ** args);
 void close_blind_gen(void ** args);
-
+blind fread_blind(FILE *fp);
+sequence Fload_blind(const char * filename);
+void print_blind(blind b);
+/*
+ *char open == 1 for opening port, 0 closing port
+*/
+void set_blind(blind b,char open,char set);
 #endif
