@@ -1,42 +1,37 @@
-#ifndef _BLIND_H_
-#define _BLIND_H_
+#ifndef _BLIND_H
+#define _BLIND_H
 
-#include <pigpio.h>
-#include <stdio.h>
+#define BLIND_TIME 120 //tempo em segundos para fechar/abrir estores
 
-#include "sequence.h"
+typedef struct blind_struct * blind;
+typedef struct home_struct * home;
 
-#define GPIO "gpio"
-#define BLIND_TIME 100 //time in seconds
 
-typedef struct {
-
-    char    *    room_name;        //string with room name
-    char    *    ID;              //0 if raspberry, relay its id ex.:("/dev/hidraw10") 
-    int     *    open_hours;     //First number is lenght, list with opening hours in minutes, since midnight
-    int     *    close_hours;   //==
-    unsigned int port_open;    //if raspberry pi,its gpio port, if relay, its number
-    unsigned int port_close;  //==
-
-}blind;
-
-blind make_blind(char * room_name,
+blind init_blind(char * room_name,
         char * ID,
-        int * open_hours,
-        int * close_hours,
         unsigned int port_open,
-        unsigned int port_close );
-
-void free_blind(blind b);
+        unsigned int port_close);
+void del_blind(blind b);
+home init_home();
+void add_blind(home h,blind b);
+void del_home(home h);
 void open_blind(blind b);
 void close_blind(blind b);
-void open_blind_gen(void ** args);
-void close_blind_gen(void ** args);
-blind fread_blind(FILE *fp);
-sequence Fload_blind(const char * filename);
-void print_blind(blind b);
-/*
- *char open == 1 for opening port, 0 closing port
-*/
-void set_blind(blind b,char open,char set);
+
+
+/*-----------STRUCTS----------*/
+struct blind_struct{
+    
+    char    *    room_name;        //string with room name
+    char    *    ID;              //0 if raspberry, relay its id ex.:("/dev/hidraw10") 
+    unsigned int port_open;    //if raspberry pi,its gpio port, if relay, its number
+    unsigned int port_close;  //==
+};
+
+struct home_struct{
+
+    unsigned int n_blinds;   //Number of blinds
+    blind * home_blinds;    //Array with lenght "n_blinds" pointing to blinds
+};
+
 #endif
