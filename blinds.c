@@ -1,7 +1,9 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <pigpio.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "blinds.h"
 
@@ -9,10 +11,24 @@
 void malloc_error(char  * strinfo){
 
     //TODO: escrever num log file
-    exit(EXIT_FAILURE);
+    FILE * f = fopen(BLIND_LOG_FILE, "a");
+    time_t current_time = time(NULL);
+    char * time_string = ctime(&current_time);
+    
+    if( f == NULL ){ 
+        printf("ERROR OPENING FILE %s\n",BLIND_LOG_FILE);
+        exit(EXIT_FAILURE);    
+    }
 
+    fprintf(f, "-------------ERROR-------------\n");
+    fprintf(f, "Error message: %s\n",strinfo);
+    fprintf(f, "Date and Time: %s\n",time_string);
+
+    fclose(f);
+    exit(EXIT_FAILURE);
 }
 
+//initializes a blind
 blind init_blind(char * room_name, char *ID, unsigned int port_open, unsigned int port_close){
 
     blind b = malloc(sizeof(struct blind_struct));
