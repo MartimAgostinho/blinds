@@ -171,3 +171,21 @@ void close_blind(blind b){
 
     set_gpio_blind(b, 0);
 }
+/*--------------DEBUGFN--------------*/
+
+void print_blind(blind b){
+
+    printf("Room Name: %s\n",b->room_name);
+    printf("ID: %s\n",b->ID);
+    printf("Port Open: %u",b->port_open);
+    printf("Port Close: %u",b->port_close);
+}
+
+void print_home(home h){
+
+    for(int i = 0;i < h->n_blinds;++i){
+
+        print_blind(h->home_blinds[i]);
+        printf("\nEstore numero %d\n",i);
+    }
+}
