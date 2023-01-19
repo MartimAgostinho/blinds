@@ -8,9 +8,8 @@
 #include "blinds.h"
 
 
-void malloc_error(char  * strinfo){
+void error_log(char  * strinfo,char * fn_name){
 
-    //TODO: escrever num log file
     FILE * f = fopen(BLIND_LOG_FILE, "a");
     time_t current_time = time(NULL);
     char * time_string = ctime(&current_time);
@@ -22,10 +21,17 @@ void malloc_error(char  * strinfo){
 
     fprintf(f, "-------------ERROR-------------\n");
     fprintf(f, "Error message: %s\n",strinfo);
+    fprintf(f, "Function: %s\n",fn_name);
     fprintf(f, "Date and Time: %s\n",time_string);
 
     fclose(f);
     exit(EXIT_FAILURE);
+}
+
+void malloc_error(char * fn_name){
+
+    error_log("Error allocating memory",fn_name);
+
 }
 
 //initializes a blind
@@ -121,16 +127,29 @@ void set_gpio_blind(blind b, char open){
         gpio = b->port_close;
     }
 
+    //comeca a abrir ou fechar os estores
     int log = gpioWrite(gpio, 1);
 
+    //Processar resultado da operacao
     if( !log ){
-        //TODO: save to a file
-        if( log == PI_BAD_GPIO ){ printf(" BAD GPIO\n "); }
-        else if( log == PI_BAD_LEVEL ){ printf(" BAD LEVEL\n "); }
+        
+        if( log == PI_BAD_GPIO ){ error_log(" BAD GPIO", "set_gpio_blind"); }
+        else if( log == PI_BAD_LEVEL ){ error_log("BAD LEVEL", "set_gpio_blind"); }
         exit(EXIT_FAILURE);
     }
 
     sleep(BLIND_TIME);
+
+    log = gpioWrite(gpio, 0);
+
+    //Processar resultado da operacao
+    if( !log ){
+        
+        if( log == PI_BAD_GPIO ){ error_log(" BAD GPIO", "set_gpio_blind"); }
+        else if( log == PI_BAD_LEVEL ){ error_log("BAD LEVEL", "set_gpio_blind"); }
+        exit(EXIT_FAILURE);
+    }
+
 }
 
 void open_blind(blind b){
