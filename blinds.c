@@ -7,6 +7,7 @@
 
 #include "blinds.h"
 
+#define CHARMAX 200
 
 void error_log(char  * strinfo,char * fn_name){
 
@@ -41,10 +42,17 @@ blind init_blind(char * room_name, char *ID, unsigned int port_open, unsigned in
     
     if( b == NULL ){ malloc_error("blinds"); }
 
-    b->room_name = (char *)malloc( sizeof(char) * strlen(room_name));
+    if( !(room_name == NULL )){ 
+        b->room_name = (char *)malloc( sizeof(char) * strlen(room_name));
+        strcpy(b->room_name, room_name);
 
-    if( b->room_name == NULL ){ malloc_error("blinds"); }
-
+        if( b->room_name == NULL ){ malloc_error("blinds"); }
+    
+    }else{ 
+    
+        b->room_name = 0;
+    }
+    
     if( ID ){ 
         b->ID = (char *)malloc( sizeof(char) * strlen(ID));
         if( b->ID == NULL ){ malloc_error("blinds"); }
@@ -104,6 +112,84 @@ void del_home(home h){
     free(h);
 }
 
+//Saves a blind struct to a file
+void fwrite_blind(blind b){
+
+    //creating file name
+    char * fname = malloc( sizeof(char) * ( strlen(b->room_name) + 4 ) );
+    
+    if( fname == NULL ){ malloc_error("fwrite_blind"); }
+
+    fname[0] = 0;
+    strcpy(fname, b->room_name);
+    strcat(fname, ".txt");
+
+    //opening file
+    FILE * f = fopen(fname, "w");
+
+    if( f == NULL ){ error_log("Error opening file", "fwrite_blind"); }
+
+    //Writing to file
+    fprintf(f,"%s\n%s\n%u\n%u",b->room_name,b->ID,b->port_open,b->port_close);
+
+    if( ferror(f) ){ error_log("Error writing to file", "fwrite_blind"); }
+
+    fclose(f);
+
+}
+
+//escreve em ficheiros todos os estores da instancia home
+void fwrite_home(home h){
+
+    for(int i = 0;i < h->n_blinds;++i){
+
+        fwrite_blind(h->home_blinds[i]);
+    }
+}
+
+//cria uma estrutura blind igual a guardada no ficheiro
+blind fread_blind(char * filename){
+
+    //init blind
+    blind b = init_blind(NULL, 0 , 0 , 0);
+
+    if( b == NULL ){ error_log("Creating a struct blind", "fread_blind"); }
+
+    char * strtmp = malloc(sizeof(char) * CHARMAX);
+
+    //opening file
+    FILE * f = fopen(filename, "r");
+
+    if( f == NULL ){ error_log("Error opening file", "fread_blind"); }
+
+    fscanf(f,"%s",strtmp);
+
+    b->room_name = (char *)malloc(sizeof(char) * strlen(strtmp));
+
+    if( b->room_name == NULL ){ malloc_error("fread_blind"); }
+    strcpy(b->room_name, strtmp);
+
+    strtmp[0] = 0;
+    fscanf(f,"%s",strtmp);
+
+    //if 
+    if( strcmp(strtmp, "(null)") ){
+    
+        b->ID = (char *)malloc(sizeof(char) * strlen(strtmp));
+
+        if( b->ID == NULL ){ malloc_error("fread_blind"); }
+
+        strcpy(b->ID, strtmp);
+    }
+
+    fscanf(f,"%u\n%u",&b->port_open,&b->port_close);
+
+    if( ferror(f) ){ error_log("Error reading file", "fread_blind"); }
+
+    free(strtmp);
+    return b;
+}
+
 //open = 1 -> open blind
 //open = 0 -> close
 void set_relay_blind(blind b, char open){
@@ -117,8 +203,6 @@ void set_relay_blind(blind b, char open){
 void set_gpio_blind(blind b, char open){
     
     //ver se esta inicializado 
-    //set gpio
-    //escrever no log se nao correr bem
     unsigned int gpio;
 
     if( open ){
@@ -177,8 +261,8 @@ void print_blind(blind b){
 
     printf("Room Name: %s\n",b->room_name);
     printf("ID: %s\n",b->ID);
-    printf("Port Open: %u",b->port_open);
-    printf("Port Close: %u",b->port_close);
+    printf("Port Open: %u\n",b->port_open);
+    printf("Port Close: %u\n",b->port_close);
 }
 
 void print_home(home h){

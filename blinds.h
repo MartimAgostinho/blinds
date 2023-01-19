@@ -16,9 +16,20 @@ void del_blind(blind b);
 home init_home();
 void add_blind(home h,blind b);
 void del_home(home h);
+
+//FILES
+void fwrite_blind(blind b);
+void fwrite_home(home h);
+blind fread_blind(char * filename);
+
+//
 void open_blind(blind b);
 void close_blind(blind b);
 
+/*--------------DEBUGFN--------------*/
+
+void print_blind(blind b);
+void print_home(home h);
 
 /*-----------STRUCTS----------*/
 struct blind_struct{
