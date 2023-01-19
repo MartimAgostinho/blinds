@@ -55,6 +55,7 @@ blind init_blind(char * room_name, char *ID, unsigned int port_open, unsigned in
     
     if( ID ){ 
         b->ID = (char *)malloc( sizeof(char) * strlen(ID));
+        strcpy(b->ID, ID);
         if( b->ID == NULL ){ malloc_error("blinds"); }
     }else{ 
         b->ID = 0;
