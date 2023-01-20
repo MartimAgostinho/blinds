@@ -56,6 +56,7 @@ blind init_blind(char * room_name, char *ID, unsigned int port_open, unsigned in
     if( ID ){ 
         b->ID = (char *)malloc( sizeof(char) * strlen(ID));
         strcpy(b->ID, ID);
+
         if( b->ID == NULL ){ malloc_error("blinds"); }
     }else{ 
         b->ID = 0;
@@ -79,6 +80,7 @@ home init_home(){
     //memory allocation for home struct
     home h = malloc(sizeof(struct home_struct));
     if( h == NULL ){ malloc_error("Creating Home"); }
+    h->n_blinds = 0;
     return h;
 }
 
@@ -97,7 +99,7 @@ void add_blind(home h, blind b){
     }
     
     //add new
-    btmp[h->n_blinds] = b;
+    btmp[h->n_blinds - 1] = b;
     free(h->home_blinds);
     h->home_blinds = btmp;
 }
@@ -268,9 +270,10 @@ void print_blind(blind b){
 
 void print_home(home h){
 
-    for(int i = 0;i < h->n_blinds;++i){
-
-        print_blind(h->home_blinds[i]);
+    printf("Numero de estores: %d\n",h->n_blinds);
+    for(int i = 0;i < (h->n_blinds );++i){
+        
         printf("\nEstore numero %d\n",i);
+        print_blind(h->home_blinds[i]);
     }
 }
