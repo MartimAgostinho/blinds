@@ -1,4 +1,0 @@
-Qclaudia
-/dev/hidraw10
-7
-8
