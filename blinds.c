@@ -1,13 +1,36 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <pigpio.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <time.h>
+
+//Dependencies pigpio
+#include <pigpio.h>
 
 #include "blinds.h"
 
 #define CHARMAX 200
+#define OUTFILENAME "OuTtmp.txt"
+
+
+//str needs to have enough memory allocated
+//args have to end with a 0
+void strapp(char *str,...){
+    
+    va_list args;
+    va_start(args,str);
+    
+    char * str2 = va_arg(args, char *);
+
+
+    while( str2 != 0 ){
+
+        strcat(str, str2);
+        str2 = va_arg(args, char *);
+    }
+    va_end(args);
+}
 
 void error_log(char  * strinfo,char * fn_name){
 
@@ -175,7 +198,7 @@ blind fread_blind(char * filename){
     strtmp[0] = 0;
     fscanf(f,"%s",strtmp);
 
-    //if 
+    //if str == "(null)" ID = 0
     if( strcmp(strtmp, "(null)") ){
     
         b->ID = (char *)malloc(sizeof(char) * strlen(strtmp));
@@ -193,12 +216,63 @@ blind fread_blind(char * filename){
     return b;
 }
 
+home fread_home(char * foldername){
+
+    home h = init_home();
+
+
+
+    return h;
+}
+
 //open = 1 -> open blind
 //open = 0 -> close
 void set_relay_blind(blind b, char open){
+
     //ver se esta inicializado 
     //set rele
     //escrever no log se nao correr bem
+    //sudo dmesg | grep -i '0519:2018' | tail -1 | grep -wo 'hidraw.[a-z]*'
+    //e processar o output para ter o numero de /dev/hidraw
+    
+    //IMPORTANTE falta ver se isto funciona ou a outra board tem o msm numero de identificacao
+
+    
+    unsigned int gpio;
+    char cmd[CHARMAX];
+    char tmp[10];
+
+    cmd[0] = 0;
+    tmp[0] = 0;
+    strapp(cmd,"rm -f",OUTFILENAME,0);
+    int log = system(cmd);
+    
+    cmd[0] = 0;
+    strapp(cmd,"sudo dmesg | grep -i '",b->ID,"' | tail -1 | grep -wo 'hidraw.[a-z]*' > ",OUTFILENAME,0);
+    log = system(cmd);
+    //TODO  
+
+    FILE *fp = fopen(OUTFILENAME, "r");
+
+    if( fp == NULL ){ error_log("Error opening file", "set_relay_blind"); }
+
+
+    if( open ){
+        gpio = b->port_open;
+    }else{
+        gpio = b->port_close;
+    }
+
+    fscanf(fp, "%s",tmp);
+    cmd[0] = 0;
+    strapp(cmd,"sudo usbrelay /dev/",tmp,"_",gpio + '0',"=1",0);
+    log = system(cmd);
+    sleep(BLIND_TIME);
+
+    cmd[0] = 0;
+    strapp(cmd,"sudo usbrelay /dev/",tmp,"_",gpio + '0',"=1",0);
+    log = system(cmd);
+
 }
 
 //open = 1 -> open blind
@@ -258,6 +332,7 @@ void close_blind(blind b){
 
     set_gpio_blind(b, 0);
 }
+
 /*--------------DEBUGFN--------------*/
 
 void print_blind(blind b){
