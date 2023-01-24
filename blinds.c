@@ -247,6 +247,7 @@ void set_relay_blind(blind b, char open){
     tmp[0] = 0;
     strapp(cmd,"rm -f ",OUTFILENAME,0);
     int log = system(cmd);
+    //Log does not return a usefull value
     
     cmd[0] = 0;
     strapp(cmd,"sudo dmesg | grep -i '",b->ID,"' | tail -1 | grep -wo 'hidraw.[a-z]*' > ",OUTFILENAME,0);
@@ -277,6 +278,8 @@ void set_relay_blind(blind b, char open){
     cmd[0] = 0;
     strapp(cmd,"sudo usbrelay /dev/",tmp,"_",nchar,"=0",0);
     log = system(cmd);
+    printf("/------------Done------------/\n");
+
 
 }
 
