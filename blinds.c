@@ -102,7 +102,7 @@ home init_home(){
     
     //memory allocation for home struct
     home h = malloc(sizeof(struct home_struct));
-    if( h == NULL ){ malloc_error("Creating Home"); }
+    if( h == NULL ){ malloc_error("init_home"); }
     h->n_blinds = 0;
     return h;
 }
@@ -113,7 +113,7 @@ void add_blind(home h, blind b){
     //create copy and increase n_blinds
     blind * btmp = malloc( (sizeof(blind) * ++h->n_blinds));
     
-    if( btmp == NULL ){ malloc_error("adding a blind "); }
+    if( btmp == NULL ){ malloc_error("add_blind"); }
 
     //copy
     for(int i = 0 ; i < (h->n_blinds - 1); ++i){
@@ -142,7 +142,7 @@ void del_home(home h){
 void fwrite_blind(blind b){
 
     //creating file name
-    char * fname = malloc( sizeof(char) * ( strlen(b->room_name) + 4 ) );
+    char * fname = malloc( sizeof(char) * ( strlen(b->room_name) + 5 ) );
     
     if( fname == NULL ){ malloc_error("fwrite_blind"); }
 
@@ -156,21 +156,48 @@ void fwrite_blind(blind b){
     if( f == NULL ){ error_log("Error opening file", "fwrite_blind"); }
 
     //Writing to file
-    fprintf(f,"%s\n%s\n%u\n%u",b->room_name,b->ID,b->port_open,b->port_close);
+    fprintf(f,"%s\n%s\n%u\n%u",
+            b->room_name,
+            b->ID,
+            b->port_open,
+            b->port_close);
 
     if( ferror(f) ){ error_log("Error writing to file", "fwrite_blind"); }
 
+    free(fname);
     fclose(f);
 
 }
 
 //escreve em ficheiros todos os estores da instancia home
-void fwrite_home(home h){
+void fwrite_home(home h , char * foldername){
+
+    //WORK ARROUND TENHO DE MUDAR
+
+
+    char cmd[CHARMAX] = {0};
+
+    strapp(cmd,"rm -f ", foldername,0);
+    system(cmd);
+
+    cmd[0];
+    strapp(cmd,"mkdir ",foldername,0);
+    system(cmd);
+    
+    cmd[0];
+    strapp(cmd,"cd ",foldername);
+    system(cmd);
+    
+    //WORK ARROUND TENHO DE MUDAR
 
     for(int i = 0;i < h->n_blinds;++i){
 
         fwrite_blind(h->home_blinds[i]);
     }
+
+    //WORK ARROUND TENHO DE MUDAR
+    system("cd ..");
+
 }
 
 //cria uma estrutura blind igual a guardada no ficheiro
@@ -219,7 +246,7 @@ blind fread_blind(char * filename){
 home fread_home(char * foldername){
 
     home h = init_home();
-
+    char path[CHARMAX];
 
 
     return h;
@@ -279,8 +306,6 @@ void set_relay_blind(blind b, char open){
     strapp(cmd,"sudo usbrelay /dev/",tmp,"_",nchar,"=0",0);
     log = system(cmd);
     printf("/------------Done------------/\n");
-
-
 }
 
 //open = 1 -> open blind
@@ -318,7 +343,6 @@ void set_gpio_blind(blind b, char open){
         else if( log == PI_BAD_LEVEL ){ error_log("BAD LEVEL", "set_gpio_blind"); }
         exit(EXIT_FAILURE);
     }
-
 }
 
 void open_blind(blind b){
