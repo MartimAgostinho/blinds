@@ -241,10 +241,11 @@ void set_relay_blind(blind b, char open){
     unsigned int gpio;
     char cmd[CHARMAX];
     char tmp[10];
+    char nchar[2];
 
     cmd[0] = 0;
     tmp[0] = 0;
-    strapp(cmd,"rm -f",OUTFILENAME,0);
+    strapp(cmd,"rm -f ",OUTFILENAME,0);
     int log = system(cmd);
     
     cmd[0] = 0;
@@ -263,14 +264,18 @@ void set_relay_blind(blind b, char open){
         gpio = b->port_close;
     }
 
+    nchar[0] = gpio + '0';
+    nchar[1] = 0;
+
     fscanf(fp, "%s",tmp);
     cmd[0] = 0;
-    strapp(cmd,"sudo usbrelay /dev/",tmp,"_",gpio + '0',"=1",0);
+    
+    strapp(cmd,"sudo usbrelay /dev/",tmp,"_",nchar,"=1",0);
     log = system(cmd);
     sleep(BLIND_TIME);
 
     cmd[0] = 0;
-    strapp(cmd,"sudo usbrelay /dev/",tmp,"_",gpio + '0',"=1",0);
+    strapp(cmd,"sudo usbrelay /dev/",tmp,"_",nchar,"=0",0);
     log = system(cmd);
 
 }
