@@ -180,11 +180,11 @@ void fwrite_home(home h , char * foldername){
     strapp(cmd,"rm -f ", foldername,0);
     system(cmd);
 
-    cmd[0];
+    cmd[0] = 0;
     strapp(cmd,"mkdir ",foldername,0);
     system(cmd);
     
-    cmd[0];
+    cmd[0] = 0;
     strapp(cmd,"cd ",foldername);
     system(cmd);
     
@@ -246,9 +246,28 @@ blind fread_blind(char * filename){
 home fread_home(char * foldername){
 
     home h = init_home();
-    char path[CHARMAX];
+    char cmd[CHARMAX] = {0};  //mais seguro e facil de usar
+    char str[CHARMAX] = {0}; //do que usar mallocs
+    char path[CHARMAX] = {0};
 
+    strapp(cmd,"ls ",foldername," > ",OUTFILENAME,0);
+    system(cmd);
 
+    FILE *fp = fopen(OUTFILENAME, "r");
+
+    if( fp == NULL ){ error_log("Error opening file", "fread_home"); }
+
+    while ( 1 ) {
+        
+        fscanf(fp, "%s",str);
+        if( feof(fp) ){ break; }
+
+        path[0] = 0;
+        strapp(path,foldername,"/",str,0);
+        add_blind(h,fread_blind(path));
+    }
+    
+    fclose(fp);
     return h;
 }
 

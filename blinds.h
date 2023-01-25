@@ -21,6 +21,7 @@ void del_home(home h);
 void fwrite_blind(blind b);
 void fwrite_home(home h , char * foldername);
 blind fread_blind(char * filename);
+home fread_home(char * foldername);
 
 //
 void open_blind(blind b);
