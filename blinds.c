@@ -85,7 +85,7 @@ blind init_blind(char * room_name, char *ID, unsigned int port_open, unsigned in
         b->ID = 0;
     }
     
-    b->port_open = port_open;
+    b->port_open  = port_open;
     b->port_close = port_close;
 
     return b;
@@ -136,6 +136,18 @@ void del_home(home h){
     }
     free(h->home_blinds);
     free(h);
+}
+
+blind get_blind(home h,char * room_name){
+
+    for(int i = 0;i < h->n_blinds;++i){
+
+        if( !strcmp(room_name, h->home_blinds[i]->room_name) ){
+            return h->home_blinds[i];
+        }
+    }
+
+    return NULL;
 }
 
 //Saves a blind struct to a file
@@ -246,8 +258,8 @@ blind fread_blind(char * filename){
 home fread_home(char * foldername){
 
     home h = init_home();
-    char cmd[CHARMAX] = {0};  //mais seguro e facil de usar
-    char str[CHARMAX] = {0}; //do que usar mallocs
+    char cmd[CHARMAX]  = {0};  //mais seguro e facil de usar
+    char str[CHARMAX]  = {0}; //do que usar mallocs
     char path[CHARMAX] = {0};
 
     strapp(cmd,"ls ",foldername," > ",OUTFILENAME,0);
@@ -278,7 +290,7 @@ void set_relay_blind(blind b, char open){
     //ver se esta inicializado 
     //set rele
     //escrever no log se nao correr bem
-    //sudo dmesg | grep -i '0519:2018' | tail -1 | grep -wo 'hidraw.[a-z]*'
+    //sudo dmesg | grep -i '0000:0000' | tail -1 | grep -wo 'hidraw.[a-z]*'
     //e processar o output para ter o numero de /dev/hidraw
     
     //IMPORTANTE falta ver se isto funciona ou a outra board tem o msm numero de identificacao
@@ -304,7 +316,6 @@ void set_relay_blind(blind b, char open){
 
     if( fp == NULL ){ error_log("Error opening file", "set_relay_blind"); }
 
-
     if( open ){
         gpio = b->port_open;
     }else{
@@ -315,6 +326,14 @@ void set_relay_blind(blind b, char open){
     nchar[1] = 0;
 
     fscanf(fp, "%s",tmp);
+
+    if( tmp[1] == 0 ){ 
+        
+        cmd[0] = 0;
+        strapp(cmd,"ID ",b->ID," not found",0);
+        error_log(cmd, "set_relay_blind");
+    }
+
     cmd[0] = 0;
     
     strapp(cmd,"sudo usbrelay /dev/",tmp,"_",nchar,"=1",0);

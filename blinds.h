@@ -9,13 +9,14 @@ typedef struct home_struct * home;
 
 
 blind init_blind(char * room_name,
-        char * ID,
-        unsigned int port_open,
-        unsigned int port_close);
+                char * ID,
+                unsigned int port_open,
+                unsigned int port_close);
 void del_blind(blind b);
 home init_home();
 void add_blind(home h,blind b);
 void del_home(home h);
+blind get_blind(home h,char * room_name);
 
 //FILES
 void fwrite_blind(blind b);
