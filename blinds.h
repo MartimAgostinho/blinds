@@ -24,7 +24,7 @@ void fwrite_home(home h , char * foldername);
 blind fread_blind(char * filename);
 home fread_home(char * foldername);
 
-//
+//actions
 void open_blind(blind b);
 void close_blind(blind b);
 
@@ -38,7 +38,7 @@ void print_home(home h);
 struct blind_struct{
     
     char    *    room_name;    //string with room name no **spaces allowed**
-    char    *    ID;          //0 if raspberry, relay its id ex.:("/dev/hidraw10") 
+    char    *    ID;          //0 if raspberry, relay its usb ex.:("usb-0000:04:00.3-2") 
     unsigned int port_open;  //if raspberry pi,its gpio port, if relay, its number
     unsigned int port_close;//==
 };
