@@ -189,8 +189,8 @@ void fwrite_home(home h , char * foldername){
 
     char cmd[CHARMAX] = {0};
 
-    strapp(cmd,"rm -f ", foldername,0);
-    system(cmd);
+    strapp(cmd,"rm -f ", foldername,0); //easy way to remote execution  
+    system(cmd);                   //Nao estou muito preocupado pq é um projeoto pra minha casa :^(
 
     cmd[0] = 0;
     strapp(cmd,"mkdir ",foldername,0);
@@ -287,14 +287,9 @@ home fread_home(char * foldername){
 //open = 0 -> close
 void set_relay_blind(blind b, char open){
 
-    //ver se esta inicializado 
-    //set rele
     //escrever no log se nao correr bem
-    //sudo dmesg | grep -i '0000:0000' | tail -1 | grep -wo 'hidraw.[a-z]*'
+    //sudo dmesg | grep -i 'usb-0000:04:00.3-2' | tail -1 | grep -wo 'hidraw.[a-z]*'
     //e processar o output para ter o numero de /dev/hidraw
-    
-    //IMPORTANTE falta ver se isto funciona ou a outra board tem o msm numero de identificacao
-
     
     unsigned int gpio;
     char cmd[CHARMAX];
