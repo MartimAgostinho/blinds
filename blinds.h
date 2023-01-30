@@ -25,6 +25,8 @@ blind fread_blind(char * filename);
 home fread_home(char * foldername);
 
 //actions
+void init_gpio_pins(/*home h*/);
+void start_blind(/*home h*/);
 void open_blind(blind b);
 void close_blind(blind b);
 

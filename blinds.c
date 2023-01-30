@@ -5,13 +5,14 @@
 #include <unistd.h>
 #include <time.h>
 
-//Dependencies pigpio
+//Dependencies pigpio usbrelay
 #include <pigpio.h>
 
 #include "blinds.h"
 
 #define CHARMAX 200
 #define OUTFILENAME "OuTtmp.txt"
+#define NUM_GPIOs 40
 
 
 //str needs to have enough memory allocated
@@ -55,6 +56,72 @@ void error_log(char  * strinfo,char * fn_name){
 void malloc_error(char * fn_name){
 
     error_log("Error allocating memory",fn_name);
+
+}
+
+void init_gpio_pins(/*home h*/){
+    
+    int log;
+    char str_log[CHARMAX] = {0};
+    char str[2] = {0};
+
+    for(int i = 0; i < NUM_GPIOs;++i){
+
+        log = gpioSetMode(i,PI_OUTPUT);
+
+        if( log ){
+            str[0] = i + '0'; 
+            strapp(str_log,"Error setting gpio Mode on pin :",str,0);
+            
+            if(log == PI_BAD_GPIO){ 
+
+                strcat(str_log," PI_BAD_GPIO"); 
+            
+            }else if (log == PI_BAD_MODE) {
+                strcat(str_log," PI_BAD_MODE");
+            }
+
+            error_log(str_log,"start_blind" );
+        }
+        
+        log = gpioWrite(i, PI_LOW);
+
+        if( log ){
+            str[0] = i + '0'; 
+            strapp(str_log,"Error setting gpio Mode on pin :",str,0);
+            
+            if(log == PI_BAD_GPIO){ 
+
+                strcat(str_log," PI_BAD_GPIO"); 
+            
+            }else if (log == PI_BAD_LEVEL) {
+                strcat(str_log," PI_BAD_LEVEL");
+            }
+
+            error_log(str_log,"start_blind" );
+        }
+    }
+}
+
+
+void start_blind(/*home h*/){
+
+    int log;
+    
+    log = gpioInitialise();
+
+    //TODO use only pins in home
+
+    if (log == PI_INIT_FAILED) {
+        error_log("PI initialization failed", "start_blind");
+    }
+
+    init_gpio_pins();
+}
+
+void stop_blind(){
+
+    gpioTerminate();
 
 }
 
@@ -185,7 +252,6 @@ void fwrite_blind(blind b){
 void fwrite_home(home h , char * foldername){
 
     //WORK ARROUND TENHO DE MUDAR
-
 
     char cmd[CHARMAX] = {0};
 
