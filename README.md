@@ -2,6 +2,11 @@
 
 ## Over engineering things into oblivion (^:
 
+## How it works 
+
+It works in the assumption that your shades motor have a switch to close and switch to open.
+In my home I'll be using a mix of raspberry pi activating relay and a usb relay board.
+
 ## How to find in what usb is your relay
 
 ```bash

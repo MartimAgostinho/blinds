@@ -5,6 +5,7 @@
 #define BLIND_LOG_FILE "BlindLog.txt"
 
 typedef struct blind_struct * blind;
+typedef struct blind_struct * manual_switch;//This existes to turn off the manual switch
 typedef struct home_struct * home;
 
 
@@ -12,6 +13,8 @@ blind init_blind(char * room_name,
                 char * ID,
                 unsigned int port_open,
                 unsigned int port_close);
+manual_switch init_manual_switch(char * ID,unsigned int port);
+void del_manual_switch(manual_switch ms);
 void del_blind(blind b);
 home init_home();
 void add_blind(home h,blind b);
@@ -27,8 +30,8 @@ home fread_home(char * foldername);
 //actions
 void init_gpio_pins(/*home h*/);
 void start_blind(/*home h*/);
-void open_blind(blind b);
-void close_blind(blind b);
+void open_blind(home h, char * room_name);
+void close_blind(home h, char * room_name);
 
 /*--------------DEBUGFN--------------*/
 
@@ -49,6 +52,7 @@ struct home_struct{
 
     unsigned int n_blinds;   //Number of blinds
     blind * home_blinds;    //Array with lenght "n_blinds" pointing to blinds
+    manual_switch ms;      //manual switch port
 };
 
 #endif
