@@ -6,7 +6,7 @@
 
 typedef struct blind_struct * blind;
 typedef struct blind_struct * manual_switch;//This existes to turn off the manual switch
-typedef struct home_struct * home;
+typedef struct home_struct  * home;
 
 
 blind init_blind(char * room_name,
@@ -17,6 +17,7 @@ manual_switch init_manual_switch(char * ID,unsigned int port);
 void del_manual_switch(manual_switch ms);
 void del_blind(blind b);
 home init_home();
+void add_ms_home(home h,manual_switch ms);
 void add_blind(home h,blind b);
 void del_home(home h);
 blind get_blind(home h,char * room_name);

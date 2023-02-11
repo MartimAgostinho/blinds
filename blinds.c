@@ -163,7 +163,7 @@ blind init_blind(char * room_name, char *ID, unsigned int port_open, unsigned in
 
 manual_switch init_manual_switch(char * ID,unsigned int port){
 
-    return init_blind(MsStr,ID,port,0);
+    return (manual_switch)init_blind(MsStr,ID,port,0);
 
 }
 
@@ -188,6 +188,10 @@ home init_home(){
     if( h == NULL ){ malloc_error("init_home"); }
     h->n_blinds = 0;
     return h;
+}
+
+void add_ms_home(home h,manual_switch ms){
+    h->ms = ms;
 }
 
 // adds a blind to a home
@@ -218,6 +222,7 @@ void del_home(home h){
         del_blind(h->home_blinds[i]);
     }
     free(h->home_blinds);
+    del_manual_switch(h->ms);
     free(h);
 }
 
