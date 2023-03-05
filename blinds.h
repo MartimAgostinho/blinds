@@ -1,7 +1,7 @@
 #ifndef _BLIND_H
 #define _BLIND_H
 
-#define BLIND_TIME 120 //tempo em segundos para fechar/abrir estores
+#define BLIND_TIME 60 //Time to close blinds
 #define BLIND_LOG_FILE "BlindLog.txt"
 
 typedef struct blind_struct * blind;

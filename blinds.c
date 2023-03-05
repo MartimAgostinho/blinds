@@ -23,7 +23,6 @@ void strapp(char *str,...){
     
     char * str2 = va_arg(args, char *);
 
-
     while( str2 != 0 ){
 
         strcat(str, str2);
@@ -50,7 +49,7 @@ void error_log(char  * strinfo,char * fn_name){
 
     fclose(f);
     exit(EXIT_FAILURE);
-}
+} 
 
 void malloc_error(char * fn_name){
 
@@ -544,17 +543,17 @@ void open_blind(home h, char * room_name){
 
     blind b = get_blind(h,room_name);
 
+    //if it doesnt find a blind
     if ( b == NULL ) { goto end_opbl; }
 
     if( b->ID ){
         set_relay_blind(b, 1 );
         goto end_opbl;
-        return;
     }
 
     set_gpio_blind(b, 1);
     end_opbl:
-    set_switch(h->ms, 1);
+    set_switch(h->ms, 0);
 
 }
 
@@ -569,12 +568,11 @@ void close_blind(home h, char * room_name){
     if( b->ID ){
         set_relay_blind(b, 0 );
         goto end_opbl;
-        return;
     }
 
     set_gpio_blind(b, 0);
     end_opbl:
-    set_switch(h->ms, 1);
+    set_switch(h->ms, 0);
 }
 
 /*--------------DEBUGFN--------------*/
